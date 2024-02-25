@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AccessAble Maps</title>
+    <link rel="stylesheet" href="/static/style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
+</head>
+<body>
+    <header>
+        <button onclick="login()">Login</button>
+    </header>
+    <div id="spinner-container">
+        <div id="spinner"></div>
+    </div>
+
+    <div id="map-container">
+        <div id="map"></div>
+        <section id="search-form">
+            <div id="departure-container">
+                <label for="departure">Where from</label>
+                <input type="text" id="departure" placeholder="Departure">
+            </div>
+
+            <label for="arrival">Where to</label>
+            <div class="arrival-container">
+                <input type="text" id="arrival" placeholder="Arrival">
+                <button onclick="searchPlaces()" id="search-button">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+        
+        
+            <div id="accessiblity-options">
+                <button class="wheelchair" onclick="selectAccessibility('wheelchair')">
+                    <i class="fas fa-wheelchair"></i>
+                    <span>Wheelchair</span>
+                </button>
+                <button class="powered-wheelchair" onclick="selectAccessibility('powered-wheelchair')">
+                    <i class="fas fa-bolt"></i>
+                    <span>Powered Wheelchair</span>
+                </button>
+                <button class="cane" onclick="selectAccessibility('cane')">
+                    <i class="fas fa-blind"></i>
+                    <span>Cane</span>
+                </button>
+            </div>     
+        </section>        
+
+        <div id="info-display">
+            <img src="" id="place-image">
+            <div id="place-name"></div>
+            <i class="fa-solid fa-location-dot"></i>
+            <span id="place-address"></span><br>
+            <a href="" id="place-link" target="_blank" style="font-size: 0.8em;">View on Google Maps</a>
+            <br>
+            <button id="plan-button" onclick="planJourney()">Let's go!</button>
+            <button class="close" onclick="closeInfoDiv()">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+    </div>
+</body>
+<script src="/static/google-maps-api.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&libraries=places&callback=initMap" async defer></script>
+</html>
