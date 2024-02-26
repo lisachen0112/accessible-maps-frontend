@@ -1,5 +1,6 @@
 var map;
 var selectedMarker = null;
+var markers = [];
 var selectedAccessibility = null;
 var userLocation = null;
 
@@ -171,6 +172,7 @@ function createMarker(place) {
     google.maps.event.addListener(marker, 'click', function () {
         openInfoDiv(place);
         selectedMarker = marker;
+        markers.push(marker);
     });
 
 }
