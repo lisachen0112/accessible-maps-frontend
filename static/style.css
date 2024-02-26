@@ -113,6 +113,7 @@ input {
     cursor: pointer;
 
 }
+
 #accessiblity-options button {
     background-color: #333;
     color: #fff;
@@ -178,3 +179,26 @@ input {
 #departure-container {
     margin-right: 23px;
 }
+
+#auth {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1001; /* Ensure the modal is above the spinner */
+}
+
+.auth-option {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #f4f4f4;
+    border: none;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+

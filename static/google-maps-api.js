@@ -106,7 +106,7 @@ function selectAccessibility(accessibility) {
 }
 
 function searchPlaces() {
-    console.log('Search places button clicked');
+
     var arrival = document.getElementById('arrival').value;
 
     // Create a Places Service instance
@@ -205,6 +205,13 @@ function openInfoDiv(place) {
     infoDiv.style.display = 'block';
     infoDiv.style.top = sectionTop + sectionHeight + 20 + 'px';
 }
+
+// Function to close div
+function closeDiv(id) {
+    var Div = document.getElementById(id);
+    Div.style.display = 'none';
+}
+
 
 // Function to close info div
 function closeInfoDiv() {
@@ -349,10 +356,6 @@ function renderMidpointOnMap(map, leg) {
     });
 }
 
-function login() {
-    alert('Login button clicked');
-}
-
 function saveSearch() {
     var departure = document.getElementById('departure').value;
     var arrival = document.getElementById('arrival').value;
@@ -361,3 +364,9 @@ function saveSearch() {
     alert('Save search button clicked');
 
 }   
+
+function authenticate() {
+    var modal = document.getElementById('auth');
+    modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+}
+

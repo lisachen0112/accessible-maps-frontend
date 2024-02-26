@@ -9,8 +9,15 @@
 </head>
 <body>
     <header>
-        <button onclick="login()">Login</button>
+        <button onclick="authenticate()">Login / Register</button>
     </header>
+
+   <div id="auth">
+        <button id="login-button" class="auth-option" onclick="login()">Login</button>
+        <button id="register-button" class="auth-option" onclick="register()">Register</button>
+        <button id='auth-close' class="close" onclick="closeDiv('auth')"><i class="fa-solid fa-x"></i></button>
+    </div>    
+
     <div id="spinner-container">
         <div id="spinner"></div>
     </div>
