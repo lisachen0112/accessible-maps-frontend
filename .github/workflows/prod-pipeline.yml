@@ -41,6 +41,7 @@ jobs:
           registry-login-server: ghcr.io
           registry-username: lisachen0112
           registry-password: ${{ secrets.GHCR_TOKEN }}
+          secure-environment-variables: GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
           name: accessable-maps
           location: 'east us'
   
