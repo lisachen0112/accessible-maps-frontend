@@ -1,6 +1,5 @@
 var map;
 var selectedMarker = null;
-var markers = [];
 var selectedAccessibility = null;
 var userLocation = null;
 
@@ -118,8 +117,19 @@ function searchPlaces() {
     }, function (results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             // Clear existing markers on the map
-            clearMarkers();
             map = new google.maps.Map(document.getElementById('map'));
+            var marker = new google.maps.Marker({
+                position: userLocation,
+                map: map,
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: 7,
+                  fillOpacity: 1,
+                  strokeWeight: 2,
+                  fillColor: '#5384ED',
+                  strokeColor: '#ffffff',
+                },
+              });
 
             // Display markers for each place in the search results
             for (var i = 0; i < results.length; i++) {
@@ -150,15 +160,6 @@ function searchPlaces() {
     });
 }
 
-// Function to clear existing markers from the map
-function clearMarkers() {
-    for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-    markers = [];
-    closeInfoDiv();
-}
-
 // Function to create a marker for a place and add it to the map
 function createMarker(place) {
     var marker = new google.maps.Marker({
@@ -172,7 +173,6 @@ function createMarker(place) {
         selectedMarker = marker;
     });
 
-    markers.push(marker);
 }
 
 // Function to open info div with custom information
