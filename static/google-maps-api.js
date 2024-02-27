@@ -118,6 +118,7 @@ function searchPlaces() {
     }, function (results, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             // Clear existing markers on the map
+            clearMarkers();
             map = new google.maps.Map(document.getElementById('map'));
             var marker = new google.maps.Marker({
                 position: userLocation,
@@ -161,6 +162,15 @@ function searchPlaces() {
     });
 }
 
+// Function to clear existing markers from the map
+function clearMarkers() {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+    closeInfoDiv();
+}
+
 // Function to create a marker for a place and add it to the map
 function createMarker(place) {
     var marker = new google.maps.Marker({
@@ -172,9 +182,9 @@ function createMarker(place) {
     google.maps.event.addListener(marker, 'click', function () {
         openInfoDiv(place);
         selectedMarker = marker;
-        markers.push(marker);
     });
 
+    markers.push(marker);
 }
 
 // Function to open info div with custom information
