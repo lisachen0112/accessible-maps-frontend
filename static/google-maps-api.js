@@ -259,7 +259,7 @@ function planJourney() {
             .catch(error => {
                 hideSpinner();
                 console.error('Error:', error);
-                alert('An error occurred while fetching data.');
+                alert('An error occurred while fetching data. Please try with another location.');
             });
 
         // Hide the info div
