@@ -123,61 +123,73 @@ function selectCustomAccessibility(buttonId) {
 }
 
 function searchPlaces() {
+    
+    showSpinner();
+
     currentJourney = null;
     var arrival = document.getElementById('arrival').value;
 
     // Create a Places Service instance
-    var placesService = new google.maps.places.PlacesService(map);
+    var location = (userLocation) ? userLocation.lat + ',' + userLocation.lng : '51.509865,-0.138092';
+    var searchPlacesUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
+    console.log('Search Places URL:', searchPlacesUrl);
 
-    // Use the Places API to search for places near the specified location (arrival)
-    placesService.textSearch({
-        query: arrival
-    }, function (results, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            // Clear existing markers on the map
-            clearMarkers();
-            map = new google.maps.Map(document.getElementById('map'));
-            var marker = new google.maps.Marker({
-                position: userLocation,
-                map: map,
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  scale: 7,
-                  fillOpacity: 1,
-                  strokeWeight: 2,
-                  fillColor: '#5384ED',
-                  strokeColor: '#ffffff',
-                },
-              });
-
-            // Display markers for each place in the search results
-            for (var i = 0; i < results.length; i++) {
-                createMarker(results[i]);
-            }
-
-            // Center the map around the bounds of all search results
-            if (results.length > 0) {
-                if (results.length === 1) {
-                    // If only one result, set a specific zoom level
-                    map.setCenter(results[0].geometry.location);
-                    map.setZoom(15); 
-                    openInfoDiv(results[0]);
-                    selectedMarker = markers[0];
-                    selectedPlace = results[0];
-                } else {
-                    // If multiple results, fit the bounds to all results
-                    var bounds = new google.maps.LatLngBounds();
-                    for (var i = 0; i < results.length; i++) {
-                        bounds.extend(results[i].geometry.location);
-                    }
-                    map.fitBounds(bounds);
-                }
-            }
-        } else {
-            console.error('Places API request failed with status:', status);
-            alert('An error occurred while fetching places.');
+    // Make a fetch request to the API
+    fetch(searchPlacesUrl)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(results => {
+        // Clear existing markers on the map
+        clearMarkers();
+        map = new google.maps.Map(document.getElementById('map'));
+        var marker = new google.maps.Marker({
+          position: userLocation,
+          map: map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 7,
+            fillOpacity: 1,
+            strokeWeight: 2,
+            fillColor: '#5384ED',
+            strokeColor: '#ffffff',
+          },
+        });
+    
+        // Display markers for each place in the search results
+        for (var i = 0; i < results.length; i++) {
+          createMarker(results[i]);
+        }
+    
+        // Center the map around the bounds of all search results
+        if (results.length > 0) {
+          if (results.length === 1) {
+            // If only one result, set a specific zoom level
+            map.setCenter(results[0].geometry.location);
+            map.setZoom(15);
+            openInfoDiv(results[0]);
+            selectedMarker = markers[0];
+            selectedPlace = results[0];
+          } else {
+            // If multiple results, fit the bounds to all results
+            var bounds = new google.maps.LatLngBounds();
+            for (var i = 0; i < results.length; i++) {
+              bounds.extend(results[i].geometry.location);
+            }
+            map.fitBounds(bounds);
+          }
+        }
+        hideSpinner();
+    })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while fetching data. Please try with another search');
+        hideSpinner();
     });
+
     closeDiv('itinerary-container');
 }
 
@@ -218,16 +230,16 @@ function openInfoDiv(place) {
     var placeRating = document.getElementById('place-rating');
     var placeWebsite = document.getElementById('place-website');
     
-    placeName.innerHTML = place.name;
-    placeAddress.innerHTML = place.formatted_address;
-    placePhone.innerHTML = place.nationalPhoneNumber;
+    placeName.innerHTML = place.details.name;
+    placeAddress.innerHTML = place.details.formatted_address;
+    placePhone.innerHTML = place.details.formatted_phone_number;
     placeRating.innerHTML = place.rating + ' out of 5';
-    placeWebsite.innerHTML = place.websiteUri;
+    placeWebsite.href = place.details.website
+    placeWebsite.textContent = place.details.website;
 
-    // Check if the place has a photo
-    if (place.photos && place.photos.length > 0) {
-        var photoUrl = place.photos[0].getUrl();
-        placeImage.src = photoUrl;
+    // Check if the place has photos    
+    if (place.photo_url !== null) {
+        placeImage.src = place.photo_url;
         placeImage.style.display = 'block';
     } else {
         // If there's no photo, hide the image element
@@ -276,7 +288,6 @@ function planJourney() {
         // Construct the URL with the entered locations
         var publiTransportUrl = `https://public-transport-planner.azurewebsites.net/api/journey?departure=${departure}&arrival=${arrival}&accessibility=${joinedValues}`;
         
-
         // Make a fetch request to the API
         fetch(publiTransportUrl)
             .then(response => response.json())
@@ -514,7 +525,56 @@ function changeColor(clickedIndex) {
     }
 }
 
+
+function sendPostRequest(rating, review, place_id, email) {
+    showSpinner();
+    console.log('Sending POST request:' + rating + review + place_id + email);
+
+    // API endpoint URL
+    var apiUrl = 'http://accessable-maps-places.centralus.azurecontainer.io/api/reviews';
+
+    // Data to be sent in the request body
+    var postData = {
+        rating: rating,
+        review: review,
+        user_email: email,
+        place_id: place_id
+    };
+
+    // Additional options for the fetch request
+    var requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add any other headers if needed
+        },
+        body: JSON.stringify(postData)
+    };
+
+    // Send the POST request
+    fetch(apiUrl, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the response data as needed
+            console.log('Post request successful:', data);
+            hideSpinner();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            hideSpinner();
+        });
+}
+
+
 function submitReview(event) {
+
+    // TODO if user is not logged in, prompt to login
+
     event.preventDefault(); // Prevents the default form submission behavior
 
     // Get the values from the form
@@ -526,11 +586,8 @@ function submitReview(event) {
         return;
     }
 
-    // Log the values to the console
-    console.log('Review Text:', reviewText);
-    console.log('Rating:', rating);
-
     // Post call to submit review
+    sendPostRequest(rating, reviewText, selectedPlace.place_id, 'testemail@gmail.com');
 
     // Reload reviews and clear fields
     viewReviews();
