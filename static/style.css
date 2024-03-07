@@ -1,17 +1,11 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
     display: flex;
     flex-direction: column;
-}
-
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    text-align: right;
+    font-family: Tahoma, Verdana, sans-serif;
+    font-weight: 600;
 }
 
 #map-container {
@@ -24,45 +18,49 @@ header {
     width: 100%; 
 }
 
-section {
-    width: 300px; 
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.arrival-container {
+    width: 340px; 
+    background-color: #004643;
     position: absolute;
     top: 60px; /* Adjust the top position as needed */
     left: 10px; /* Adjust the left position as needed */
     z-index: 2; /* Place the section in front of the map */
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-}
-
-.arrival-container {
     display: flex;
+    padding: 3px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    align-items: center;
 }
 
-input {
-    width: 100%; 
-    padding: 8px;
-    margin-bottom: 16px;
-    box-sizing: border-box;
+#arrival {
+    flex: 1;
+    background-color: transparent;
+    color: #e8e4e6;
+    border: none;
+    padding: 10px;
+}
+
+#arrival:focus {
+    outline-style: solid;
+    outline-color: transparent;
 }
 
 #search-button {
     border: none;
-    margin-right: -10px;
-    margin-left: 5px;
     background-color: transparent;
     cursor: pointer;
-    margin-top: -13px;
+    width: 10%;
 }
 
 #search-button i {
+    margin-left: -8px;
     font-size: 1.2em; 
+    color:#e8e4e6;
+}
+
+#search-button i:hover {
+    font-size: 1.2em; 
+    color: #f9bc60;
 }
 
 #info-display {
@@ -70,7 +68,8 @@ input {
     z-index: 2;
     left: 10px;
     width: 300px; 
-    background-color: #fff;
+    background-color: #abd1c6;
+    color: #001e1d;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -82,9 +81,24 @@ input {
     padding-bottom: 5px;
 }
 
-#place-address {
+.info {
     font-size: 0.8em;
+    display: flex;
+    align-items: center;
     padding-bottom: 5px;
+}
+
+.icon-div {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info span, .info a {
+    margin-left: 10px;
+    max-width: calc(100% - 30px);
 }
 
 .close {
@@ -95,6 +109,40 @@ input {
     background: none;
     cursor: pointer;
     font-size: 0.8em;
+    color: #001e1d;
+}
+
+#user {
+    position: absolute;
+    top: 12px;
+    right: 60px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #004643;
+    border: 2px solid transparent;
+    color: #e8e4e6;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 4;
+}
+
+#user:hover {
+    background-color: #f9bc60;;
+    color: #001e1d;
+}
+
+#auth-close {
+    color: #e8e4e6;
+}
+
+#auth-close:hover {
+    color: #f9bc60;
+}
+
+.close:hover {
+    color: #f9bc60;
 }
 
 #place-image {
@@ -105,40 +153,90 @@ input {
 }
 
 #plan-button {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
+    display: block;
+    background-color: #004643;
+    padding: 8px;
+    border: 2px solid #001e1d;
     border-radius: 4px;
     cursor: pointer;
+    color: #e8e4e6;
+    font-weight: 500;
+}
 
+#plan-button:hover {
+    background-color: #f9bc60;
+    color: #001e1d;
+}
+
+#plan-journey-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+::placeholder {
+    color: #e8e4e6;
+}
+
+#departure {
+    background-color: transparent;
+    border: 2px solid #001e1d;
+    border-radius: 4px;
+    color: #001e1d;
+    padding: 8px;
+    width: 90%; 
+    margin-right: 10px;
+}
+
+#departure:focus {
+    outline-style: solid;
+    outline-color: #f9bc60;
 }
 
 #accessiblity-options button {
-    background-color: #333;
-    color: #fff;
+    background-color: #004643;
+    color: #e8e4e6;
     padding: 10px 15px;
-    border: none;
+    border: 2px solid #001e1d;
     border-radius: 4px;
     cursor: pointer;
 }
 
 #accessiblity-options button.selected {
-    background-color: #555; 
+    background-color: #f9bc60; 
+    color: #001e1d;
 }
 
-
-#accessiblity-options button i {
-    margin-right: 5px; 
-    display: inline-block;
-}
-
-#accessiblity-options button span {
-    display: none; /* Hide text by default */
-}
-
-#accessiblity-options button.expanded span {
+#accessiblity-options button.expanded .accessibility-text {
     display: inline; /* Show text when button is expanded */
+}
+
+.accessibility-text {
+    display: none; /* Hide text by default */
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+#custom-options button {
+    margin-top: 10px;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #001e1d;
+    border-color: #001e1d;
+    padding: 8px;
+    opacity: 0.5;
+}
+
+#custom-options button.custom-selected {
+    color: #001e1d;
+    border-color: #001e1d;
+    opacity: 1;
+    box-shadow: 0 0 5px rgba(0, 70, 67, 0.5);
+}
+
+.material-icons.md-18 { 
+    font-size: 18px;
+    display: inline-block;
 }
 
 #spinner-container {
@@ -153,8 +251,8 @@ input {
 }
 
 #spinner {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #555;
+    border: 8px solid #e8e4e6;
+    border-top: 8px solid #004643;
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -171,22 +269,13 @@ input {
     100% { transform: rotate(360deg); }
 }
 
-
-#plan-button {
-    margin-top: 5px;
-}
-
-#departure-container {
-    margin-right: 23px;
-}
-
 #auth {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
+    background-color: #004643;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -196,9 +285,155 @@ input {
 .auth-option {
     padding: 10px;
     cursor: pointer;
-    background-color: #f4f4f4;
-    border: none;
+    background-color: transparent;
+    border: 2px solid #001e1d;
+    color: #e8e4e6;
     border-radius: 4px;
     margin-right: 5px;
 }
 
+.auth-option:hover {
+    background-color: #f9bc60;
+    color: #001e1d;
+}
+
+#itinerary-heading {
+    font-weight: 600;
+    text-align: center;
+}
+
+#itinerary-container {
+    position: absolute;
+    z-index: 4;
+    left: 10px;
+    width: 300px; 
+    background-color: #abd1c6;
+    color: #004643;
+    padding: 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.dots {
+    margin-top: 8px;
+    margin-left: 10px;
+    color: #004643;
+}
+
+.leg {
+    margin-top: 10px;
+}
+
+.fa-person-walking {
+    color: #0000FF;
+    margin-right: 7px;
+}
+
+.fa-bus, .fa-train-subway {
+    color: #FF0000;
+    margin-right: 5px;
+}
+
+.back-button {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    color: #f9bc60;
+}
+
+.back-button i {
+    font-size: 1.1em;
+    margin-top: 4px;
+    margin-left: -4px;
+}
+
+#reviews {
+    display: none;
+    border: none;
+    position: fixed;
+    background-color: #004643;
+    color: #e8e4e6;
+    padding: 20px;
+    width: 30%;
+    top: 50%;
+    left: 50%;
+    border-radius: 8px;
+    z-index: 90;
+    transform: translate(-50%, -50%) /* Center the div */
+}
+
+#review-text{
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #e8e4e6;
+    color: #e8e4e6;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+#review-text:focus {
+    outline-style: solid;
+    outline-color: #f9bc60;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; 
+    margin-bottom: 20px;
+}
+
+.star {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #e8e4e6;
+}
+
+.star .checked {
+    color: #f9bc60;
+}
+
+.review-form {
+    position: relative;
+}
+
+button[type="submit"] {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    background-color: #f9bc60;
+    color: #001e1d;
+    border: 2px solid #001e1d;
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#info-display p {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#reviews .close {
+    color: #e8e4e6;
+}
+
+#reviews .close:hover {
+    color: #f9bc60;
+}

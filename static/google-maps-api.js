@@ -1,8 +1,10 @@
 var map;
 var selectedMarker = null;
+var selectedPlace = null;
 var markers = [];
 var selectedAccessibility = null;
 var userLocation = null;
+var currentJourney = null;
 
 async function initMap() {
     showSpinner();
@@ -33,7 +35,7 @@ async function initMap() {
                       strokeColor: '#ffffff',
                     },
                   });
-                document.getElementById('departure').value = 'Current location';
+                document.getElementById('departure').value = userLocation.lat + ', ' + userLocation.lng;
                 hideSpinner();
 
             },
@@ -103,10 +105,25 @@ function selectAccessibility(accessibility) {
     selectedAccessibility = accessibility;
     button.classList.add('selected');
     button.classList.toggle('expanded');
+    
+    // Show custom-options only when 'custom' is selected
+    if (selectedAccessibility === 'custom') {
+        document.getElementById('custom-options').style.display = 'block';
+    }
+    else {
+        document.getElementById('custom-options').style.display = 'none';
+    }
+}
+
+function selectCustomAccessibility(buttonId) {
+    var button = document.getElementById(buttonId);
+
+    // Toggle the 'selected' class on the button
+    button.classList.toggle('custom-selected');
 }
 
 function searchPlaces() {
-
+    currentJourney = null;
     var arrival = document.getElementById('arrival').value;
 
     // Create a Places Service instance
@@ -146,6 +163,7 @@ function searchPlaces() {
                     map.setZoom(15); 
                     openInfoDiv(results[0]);
                     selectedMarker = markers[0];
+                    selectedPlace = results[0];
                 } else {
                     // If multiple results, fit the bounds to all results
                     var bounds = new google.maps.LatLngBounds();
@@ -160,6 +178,7 @@ function searchPlaces() {
             alert('An error occurred while fetching places.');
         }
     });
+    closeDiv('itinerary-container');
 }
 
 // Function to clear existing markers from the map
@@ -168,7 +187,7 @@ function clearMarkers() {
         markers[i].setMap(null);
     }
     markers = [];
-    closeInfoDiv();
+    closeDiv('info-display');
 }
 
 // Function to create a marker for a place and add it to the map
@@ -182,6 +201,7 @@ function createMarker(place) {
     google.maps.event.addListener(marker, 'click', function () {
         openInfoDiv(place);
         selectedMarker = marker;
+        selectedPlace = place;
     });
 
     markers.push(marker);
@@ -194,9 +214,15 @@ function openInfoDiv(place) {
     var placeName = document.getElementById('place-name');
     var placeAddress = document.getElementById('place-address');
     var placeImage = document.getElementById('place-image');
+    var placePhone = document.getElementById('place-phone');
+    var placeRating = document.getElementById('place-rating');
+    var placeWebsite = document.getElementById('place-website');
     
     placeName.innerHTML = place.name;
     placeAddress.innerHTML = place.formatted_address;
+    placePhone.innerHTML = place.nationalPhoneNumber;
+    placeRating.innerHTML = place.rating + ' out of 5';
+    placeWebsite.innerHTML = place.websiteUri;
 
     // Check if the place has a photo
     if (place.photos && place.photos.length > 0) {
@@ -208,28 +234,16 @@ function openInfoDiv(place) {
         placeImage.style.display = 'none';
     }
 
-    var mapsLink = document.getElementById('place-link');
-    mapsLink.href = `https://www.google.com/maps/place/?q=place_id:${place.place_id}`;
-
-    var sectionHeight = document.querySelector('section').offsetHeight;
-    var sectionTop = document.querySelector('section').offsetTop;
-
+    var sectionHeight = document.getElementById('arrival-container').offsetHeight;
+    var sectionTop = document.getElementById('arrival-container').offsetTop;
     infoDiv.style.display = 'block';
-    infoDiv.style.top = sectionTop + sectionHeight + 20 + 'px';
+    infoDiv.style.top = sectionTop + sectionHeight + 10 + 'px';
 }
 
 // Function to close div
 function closeDiv(id) {
     var Div = document.getElementById(id);
     Div.style.display = 'none';
-}
-
-
-// Function to close info div
-function closeInfoDiv() {
-    var infoDiv = document.getElementById('info-display');
-    infoDiv.style.display = 'none';
-    selectedMarker = null;
 }
 
 function planJourney() {
@@ -240,21 +254,37 @@ function planJourney() {
     }
     else {
         showSpinner();
+
+        if (selectedAccessibility === 'custom') {
+            // Get the current selection of the custom accessibility parameters
+            var customAccessParams = document.querySelectorAll('.access-param.custom-selected');
+            var values = Array.from(customAccessParams).map(button => button.getAttribute('data-value'));
+            var joinedValues = values.join(',');
+        }
+        else if (selectedAccessibility === 'wheelchair') {
+            var joinedValues = 'noSolidStairs,noEscalators,stepFreeToVehicle,stepFreeToPlatform';
+        }
+        else if (selectedAccessibility === 'cane') {
+            var joinedValues = 'noSolidStairs';
+        }
+
         // Get the coordinates
         var destinationLatLng = selectedMarker.getPosition();
         var arrival = destinationLatLng.lat() + ',' + destinationLatLng.lng();
         var departure = userLocation.lat + ',' + userLocation.lng;
 
         // Construct the URL with the entered locations
-        var publiTransportUrl = `https://public-transport-planner.azurewebsites.net/api/journey?departure=${departure}&arrival=${arrival}`;
+        var publiTransportUrl = `https://public-transport-planner.azurewebsites.net/api/journey?departure=${departure}&arrival=${arrival}&accessibility=${joinedValues}`;
         
 
         // Make a fetch request to the API
         fetch(publiTransportUrl)
             .then(response => response.json())
             .then(data => {
-                hideSpinner();
+                currentJourney = data;
                 renderJourney(data.legs);
+                showItinerary(data.legs, data.duration);
+                hideSpinner();
             })
             .catch(error => {
                 hideSpinner();
@@ -263,9 +293,83 @@ function planJourney() {
             });
 
         // Hide the info div
-        closeInfoDiv();
+        closeDiv('info-display');
     }
-    // Show itinerary options
+}
+
+function showItinerary(legs, duration) {
+    var itineraryContainer = document.getElementById('itinerary-container');
+
+    // Clear previous itinerary if any
+    itineraryContainer.innerHTML = '';
+
+    // Create a button to go back to info
+    var backButton = document.createElement('button');
+    backButton.classList.add('back-button');
+    backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+    backButton.onclick = backToInfo;
+    itineraryContainer.appendChild(backButton);
+
+    // Create a heading for the itinerary
+    var heading = document.createElement('div');
+    heading.id = 'itinerary-heading';
+    heading.textContent = 'Directions (ETA: ' + duration + ' minutes)';
+    itineraryContainer.appendChild(heading);
+
+    var sectionHeight = document.getElementById('arrival-container').offsetHeight;
+    var sectionTop = document.getElementById('arrival-container').offsetTop;
+    itineraryContainer.style.display = 'flex';
+    itineraryContainer.style.flexDirection = 'column';
+    itineraryContainer.style.top = sectionTop + sectionHeight + 10 + 'px';
+
+    // Iterate through each leg and create details
+    legs.forEach(function(leg, index)  {
+        var legContainer = document.createElement('div');
+        legContainer.style.display = 'flex';
+        legContainer.style.alignItems = 'center';
+        legContainer.classList.add('leg');
+
+        // icon container
+        var iconContainer = document.createElement('div');
+        iconContainer.style.width = '30px';
+        iconContainer.style.height = '30px';
+        iconContainer.style.borderRadius = '50%';
+        iconContainer.style.display = 'flex';
+        iconContainer.style.alignItems = 'center';
+        iconContainer.style.justifyContent = 'center';
+        iconContainer.style.marginRight = '10px';
+
+        // icon
+        var icon = document.createElement('i');
+        if (leg.mode === 'walking') {
+            icon.classList.add('fa-solid', 'fa-person-walking');
+        } 
+        else if (leg.mode === 'bus') {
+            icon.classList.add('fa-solid', 'fa-bus');
+        }
+        else {
+            icon.classList.add('fa-solid', 'fa-train-subway');
+        }
+        iconContainer.appendChild(icon);
+        legContainer.appendChild(iconContainer);
+
+        var summary = document.createElement('span');
+        summary.textContent = leg.summary;
+        legContainer.appendChild(summary);
+
+        itineraryContainer.appendChild(legContainer);
+
+        if (index !== legs.length - 1) {
+            var dots = document.createElement('div');
+            dots.classList.add('dots');
+            dots.style.display = 'block';
+            var dotsIcon = document.createElement('i');
+            dotsIcon.classList.add('fa-solid', 'fa-ellipsis-vertical');
+            dots.appendChild(dotsIcon);
+            itineraryContainer.appendChild(dots);
+        }
+        
+    });
 }
 
 function showSpinner() {
@@ -322,12 +426,6 @@ function renderJourney(legs) {
 
         // Conditionally add markers for departure and arrival points
         if (index === 0) {
-            // First leg, consider it as departure
-            // var marker = new google.maps.Marker({
-            //     position: { lat: leg.departurePoint.lat, lng: leg.departurePoint.lon },
-            //     map: map,
-            //     title: leg.departurePoint.commonName
-            // });
             var marker = new google.maps.Marker({
                 position: userLocation,
                 map: map,
@@ -340,7 +438,9 @@ function renderJourney(legs) {
                   strokeColor: '#ffffff',
                 },
               });
-        } else if (index === legs.length - 1) {
+        } 
+        
+        if (index === legs.length - 1) {
             // Last leg, consider it as arrival
             var marker = new google.maps.Marker({
                 position: { lat: leg.arrivalPoint.lat, lng: leg.arrivalPoint.lon },
@@ -349,7 +449,13 @@ function renderJourney(legs) {
             });
         } else {
             // Use a different representation (e.g., point) for midpoints
-            renderMidpointOnMap(map, leg);
+            var midpointMarker = renderMidpointOnMap(map, leg);
+
+            // Add event listener for zoom changes to adjust midpoint marker radius
+            google.maps.event.addListener(map, 'zoom_changed', function() {
+                var newRadius = 20 * Math.pow(2, 15 - map.getZoom()); // Adjust the scaling factor as needed
+                midpointMarker.setRadius(newRadius);
+            });
         }
     });
     map.fitBounds(bounds);
@@ -363,9 +469,11 @@ function renderMidpointOnMap(map, leg) {
         fillColor: '#808080',
         fillOpacity: 0.8,
         map: map,
-        center: { lat: leg.departurePoint.lat, lng: leg.departurePoint.lon },
-        radius: 10 
+        center: { lat: leg.arrivalPoint.lat, lng: leg.arrivalPoint.lon },
+        radius: 20 
     });
+
+    return midpointMarker;
 }
 
 function saveSearch() {
@@ -382,3 +490,58 @@ function authenticate() {
     modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
 }
 
+function backToInfo() {
+    openInfoDiv(selectedPlace);
+    closeDiv('itinerary-container');
+}
+
+function viewReviews() {
+    // get call to fetch reviews
+
+    var reviewsDiv = document.getElementById('reviews');
+    reviewsDiv.style.display = 'block';
+}
+
+function changeColor(clickedIndex) {
+    const stars = document.querySelectorAll('.star-rating .fa-star');
+
+    for (let i = 0; i < stars.length; i++) {
+        if (i < clickedIndex) {
+        stars[i].classList.add('checked');
+        } else {
+        stars[i].classList.remove('checked');  // Reset color for stars after the clicked one
+        }
+    }
+}
+
+function submitReview(event) {
+    event.preventDefault(); // Prevents the default form submission behavior
+
+    // Get the values from the form
+    var reviewText = document.getElementById('review-text').value;
+    var rating = document.querySelectorAll('.star-rating .fa-star.checked').length;
+
+    if (rating === 0) {
+        alert('Please enter a star rating and/or a review text.');
+        return;
+    }
+
+    // Log the values to the console
+    console.log('Review Text:', reviewText);
+    console.log('Rating:', rating);
+
+    // Post call to submit review
+
+    // Reload reviews and clear fields
+    viewReviews();
+    document.getElementById('review-text').value = '';
+    resetStarColors();
+}
+
+function resetStarColors() {
+    const stars = document.querySelectorAll('.star-rating .fa-star');
+
+    for (let i = 0; i < stars.length; i++) {
+        stars[i].classList.remove('checked');
+    }
+}
