@@ -745,6 +745,14 @@ function renderUserReviews(reviews) {
         reviews.forEach(function (review) {
             var reviewDiv = document.createElement('div');
             reviewDiv.classList.add('review');
+
+            // Place name
+            var placeName = document.createElement('div');
+            placeName.classList.add('place-name');
+            placeName.textContent = review.place_name;
+            placeName.style.fontWeight = 'bold';
+            placeName.style.marginBottom = '5px';
+            reviewDiv.appendChild(placeName);
             
             // Stars
             var starsDiv = document.createElement('div');
@@ -764,12 +772,6 @@ function renderUserReviews(reviews) {
             reviewText.classList.add('comment');
             reviewText.textContent = '"' + review.review + '"';
             reviewDiv.appendChild(reviewText);
-
-            // Place name
-            var placeName = document.createElement('div');
-            placeName.classList.add('place-name');
-            placeName.textContent = review.place_name;
-            reviewDiv.appendChild(placeName);
 
             reviewsDiv.appendChild(reviewDiv);
     });
