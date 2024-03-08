@@ -5,6 +5,7 @@ var markers = [];
 var selectedAccessibility = null;
 var userLocation = null;
 var currentJourney = null;
+var user = null;
 
 async function initMap() {
     showSpinner();
@@ -257,6 +258,17 @@ function openInfoDiv(place) {
 function closeDiv(id) {
     var Div = document.getElementById(id);
     Div.style.display = 'none';
+
+    if (id === 'auth') {
+        var email = document.getElementById('email');
+        var password = document.getElementById('password');
+        email.value = '';
+        password.value = '';
+    }
+    else if (id === 'reviews') {
+        document.getElementById('review-text').value = '';
+        resetStarColors();
+    }
 }
 
 function planJourney() {
@@ -498,8 +510,20 @@ function saveSearch() {
 }   
 
 function authenticate() {
-    var modal = document.getElementById('auth');
-    modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+    // if user is logged in, show user info
+    if (user) {
+        var modal = document.getElementById('user-info');
+        if (modal.style.display === 'block') {
+            modal.style.display = 'none';
+        }
+        else {
+            userProfile()
+        }
+    }
+    else { // if user is not logged in, show login form
+        var modal = document.getElementById('auth');
+        modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+    }
 }
 
 function backToInfo() {
@@ -534,6 +558,7 @@ async function viewReviews() {
 
 function renderReviews(reviews) {
     var reviewsDiv = document.getElementById('review-list');
+    reviewsDiv.innerHTML = '';
 
     if (reviews.length > 0) {
         reviews.forEach(function (review) {
@@ -626,29 +651,31 @@ async function sendPostRequest(rating, review, place_id, email) {
 }
 
 async function submitReview(event) {
-
-    // TODO if user is not logged in, prompt to login
-
     event.preventDefault(); // Prevents the default form submission behavior
 
-    // Get the values from the form
-    var reviewText = document.getElementById('review-text').value;
-    var rating = document.querySelectorAll('.star-rating .fa-star.checked').length;
-
-    if (rating === 0) {
-        alert('Please enter a star rating (required) and a review text.');
-        return;
+    if (!user) {
+        alert('You need to be logged in to submit a review');
     }
+    else {
+        // Get the values from the form
+        var reviewText = document.getElementById('review-text').value;
+        var rating = document.querySelectorAll('.star-rating .fa-star.checked').length;
 
-    showSpinner();
-    // Post call to submit review
-    await sendPostRequest(rating, reviewText, selectedPlace.place_id, 'testemail@gmail.com');
+        if (rating === 0) {
+            alert('Please enter a star rating (required) and a review text.');
+            return;
+        }
 
-    // Reload reviews and clear fields
-    await viewReviews();
-    document.getElementById('review-text').value = '';
-    resetStarColors();
-    hideSpinner();
+        showSpinner();
+        // Post call to submit review
+        await sendPostRequest(rating, reviewText, selectedPlace.place_id, user);
+
+        // Reload reviews and clear fields
+        await viewReviews();
+        document.getElementById('review-text').value = '';
+        resetStarColors();
+        hideSpinner();
+    }
 }
 
 function resetStarColors() {
@@ -657,4 +684,113 @@ function resetStarColors() {
     for (let i = 0; i < stars.length; i++) {
         stars[i].classList.remove('checked');
     }
+}
+
+function login(event) {
+    event.preventDefault();
+    console.log('Login button clicked'); 
+    // TODO set user to logged in user
+    user = document.getElementById('email').value;
+    closeDiv('auth');
+    // login successful, show user info
+    userProfile();
+}
+
+function register() {
+    console.log('Register button clicked');
+    // TODO if registration is successful, set user to logged in users
+    user = document.getElementById('email').value;
+    closeDiv('auth');
+    // registration successful, show user info
+    userProfile();
+}
+
+function userProfile() {
+    var userInfo = document.getElementById('user-info');
+    userInfo.style.display = 'block';
+
+    document.getElementById('user-email-display').textContent = 'Welcome, ' + user;
+
+    showUserReviews();
+}
+
+function showUserReviews() {
+    var userReview = document.getElementById('userReviews');
+    userReview.classList.add('selected');
+
+    var userReview = document.getElementById('userSaved');
+    userReview.classList.remove('selected');
+
+    // Get the reviews for the selected place
+    showSpinner();
+    var reviewsUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/reviews/user?user_email=${user}`;
+    fetch(reviewsUrl) 
+        .then(response => response.json())
+        .then(data => { 
+            renderUserReviews(data);
+            hideSpinner();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching reviews. Please try again later.');
+            hideSpinner();
+        });
+}
+
+function renderUserReviews(reviews) {
+    var reviewsDiv = document.getElementById('user-view');
+    reviewsDiv.innerHTML = '';
+
+    if (reviews.length > 0) {
+        reviews.forEach(function (review) {
+            var reviewDiv = document.createElement('div');
+            reviewDiv.classList.add('review');
+            
+            // Stars
+            var starsDiv = document.createElement('div');
+            starsDiv.classList.add('stars');
+            for (var i = 1; i <= 5; i++) {
+                var star = document.createElement('i');
+                star.classList.add('fa', 'fa-star');
+                if (i <= review.rating) {
+                    star.classList.add('checked');
+                }
+                starsDiv.appendChild(star);
+            }
+            reviewDiv.appendChild(starsDiv);
+
+            // Comment
+            var reviewText = document.createElement('div');
+            reviewText.classList.add('comment');
+            reviewText.textContent = '"' + review.review + '"';
+            reviewDiv.appendChild(reviewText);
+
+            reviewsDiv.appendChild(reviewDiv);
+    });
+    } else {    
+        var noReviews = document.createElement('div');
+        noReviews.classList.add('no-reviews');
+        noReviews.textContent = "You haven't submitted any reviews yet.";
+        reviewsDiv.appendChild(noReviews);
+    }
+}
+
+function logout() {
+    user = null;
+    var userInfo = document.getElementById('user-info');
+    userInfo.style.display = 'none';
+
+    var auth = document.getElementById('auth');
+    auth.style.display = 'block';
+}
+
+function showUserSaved() {
+    // TODO fetch user saved searches
+    var userSaved = document.getElementById('userSaved');
+    userSaved.classList.add('selected');
+
+    var userReview = document.getElementById('userReviews');
+    userReview.classList.remove('selected');
+
+    console.log('Show user saved searches');
 }

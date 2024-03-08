@@ -17,18 +17,32 @@
         <i class="fa-solid fa-user"></i>
     </button>
     <div id="auth">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <button id="login-button" class="auth-option" onclick="login()">Login</button>
-        <button id="register-button" class="auth-option" onclick="register()">Register</button>
-        <button id='auth-close' class="close" onclick="closeDiv('auth')"><i class="fa-solid fa-x"></i></button>
+        <form>
+            <div id="user-email">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div id="user-password">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button id="login-button" class="auth-option" onclick="login(event)">Login</button>
+            <button id="register-button" class="auth-option" onclick="register(event)">Register</button>
+            <button type="button" id='auth-close' class="close" onclick="closeDiv('auth')"><i class="fa-solid fa-x"></i></button>
+        </form>
     </div>   
 
     <div id="user-info">
+        <button type="button" id='user-close' class="close" onclick="closeDiv('user-info')"><i class="fa-solid fa-x"></i></button>
+        <h3 id="user-email-display"></h3>
+        <div id="profile-content">
+            <div id="profile-options">
+                <p class="profile-option" id='userReviews' onclick="showUserReviews()">Your reviews</p>
+                <p class="profile-option" id="userSaved" onclick="showUserSaved()">Your saved places</p>
+            </div>
+            <div id="user-view"></div>
+        </div>
+        
         <button id="logout" onclick="logout()">Logout</button>
     </div>  
 

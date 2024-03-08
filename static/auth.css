@@ -1,7 +1,3 @@
-#user-info {
-    display: none;
-}
-
 #auth {
     display: none;
     position: fixed;
@@ -13,21 +9,26 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     z-index: 1001; /* Ensure the modal is above the spinner */
+    min-width: 20%;
+    color: #e8e4e6;
+    text-align: center;
 }
 
-.auth-option {
+.auth-option, #logout {
     padding: 10px;
     cursor: pointer;
     background-color: transparent;
-    border: 2px solid #001e1d;
+    border: 2px solid #e8e4e6;
     color: #e8e4e6;
     border-radius: 4px;
     margin-right: 5px;
+    margin-top: 10px;
 }
 
-.auth-option:hover {
+.auth-option:hover, #logout:hover {
     background-color: #f9bc60;
     color: #001e1d;
+    border: 2px solid #001e1d;
 }
 
 #user {
@@ -51,10 +52,94 @@
     color: #001e1d;
 }
 
-#auth-close {
+#auth-close, #user-close {
     color: #e8e4e6;
 }
 
-#auth-close:hover {
+#auth-close:hover, #user-close:hover {
     color: #f9bc60;
+}
+
+#auth input {
+    margin-bottom: 10px;
+    margin-top: 5px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: none;
+    color: #004643;
+    background-color: #e8e4e6;
+}
+
+#auth label {
+    font-weight: 400;
+    display: block;
+    text-align: left;
+}
+
+#auth input::placeholder {
+    color: #004643;
+}
+
+#auth input:focus {
+    outline-style: solid;
+    outline-color: #f9bc60;
+}
+
+#user-info {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #004643;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1001; /* Ensure the modal is above the spinner */
+    min-width: 50%;
+    min-height: 63%;
+    color: #e8e4e6;
+    text-align: center;
+}
+
+#logout {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+#profile-content {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+#profile-options {
+    width: 20%;
+    font-weight: 400;
+    padding: 5px;
+    text-align: left;
+}
+
+#user-view {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
+.profile-option {
+    margin-top: 0;
+    cursor: pointer;
+}
+
+.profile-option:hover {
+    color: #f9bc60;
+}
+
+#userSaved.selected, #userReviews.selected {
+    color: #f9bc60;
+    text-decoration: underline;
 }
