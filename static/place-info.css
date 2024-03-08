@@ -1,0 +1,159 @@
+#search-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    width: 10%;
+}
+
+#search-button i {
+    margin-left: -8px;
+    font-size: 1.2em; 
+    color:#e8e4e6;
+}
+
+#search-button i:hover {
+    font-size: 1.2em; 
+    color: #f9bc60;
+}
+
+#info-display {
+    position: absolute;
+    z-index: 2;
+    left: 10px;
+    width: 300px; 
+    background-color: #abd1c6;
+    color: #001e1d;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#place-name {
+    font-size: 1.3em;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.info {
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    padding-bottom: 5px;
+}
+
+.icon-div {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info span, .info a {
+    margin-left: 10px;
+    max-width: calc(100% - 30px);
+}
+
+#info-display p {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#accessiblity-options {
+    margin-bottom: 10px;
+}
+
+#place-image {
+    width: 100%;
+    margin: 0 auto; 
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#plan-button {
+    display: block;
+    background-color: #004643;
+    padding: 8px;
+    border: 2px solid #001e1d;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #e8e4e6;
+    font-weight: 500;
+}
+
+#plan-button:hover {
+    background-color: #f9bc60;
+    color: #001e1d;
+}
+
+#plan-journey-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+::placeholder {
+    color: #e8e4e6;
+}
+
+#departure {
+    background-color: transparent;
+    border: 2px solid #001e1d;
+    border-radius: 4px;
+    color: #001e1d;
+    padding: 8px;
+    width: 90%; 
+    margin-right: 10px;
+}
+
+#departure:focus {
+    outline-style: solid;
+    outline-color: #f9bc60;
+}
+
+#accessiblity-options button {
+    background-color: #004643;
+    color: #e8e4e6;
+    padding: 10px 15px;
+    border: 2px solid #001e1d;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#accessiblity-options button.selected {
+    background-color: #f9bc60; 
+    color: #001e1d;
+}
+
+#accessiblity-options button.expanded .accessibility-text {
+    display: inline; /* Show text when button is expanded */
+}
+
+.accessibility-text {
+    display: none; /* Hide text by default */
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+#custom-options button {
+    margin-top: 10px;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #001e1d;
+    border-color: #001e1d;
+    padding: 8px;
+    opacity: 0.5;
+}
+
+#custom-options button.custom-selected {
+    color: #001e1d;
+    border-color: #001e1d;
+    opacity: 1;
+    box-shadow: 0 0 5px rgba(0, 70, 67, 0.5);
+}
+
+.material-icons.md-18 { 
+    font-size: 18px;
+    display: inline-block;
+}
