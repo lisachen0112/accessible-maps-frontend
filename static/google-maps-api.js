@@ -613,8 +613,8 @@ function changeColor(clickedIndex) {
     }
 }
 
-async function sendPostRequest(rating, review, place_id, email) {
-    console.log('Sending POST request:' + rating + review + place_id + email);
+async function sendPostRequest(rating, review, place_id, email, place_name) {
+    console.log('Sending POST request:' + rating + review + place_id + email, place_name);
 
     // API endpoint URL
     var apiUrl = 'http://accessable-maps-places.centralus.azurecontainer.io/api/reviews';
@@ -624,7 +624,8 @@ async function sendPostRequest(rating, review, place_id, email) {
         rating: rating,
         review: review,
         user_email: email,
-        place_id: place_id
+        place_id: place_id,
+        place_name: place_name
     };
 
     // Additional options for the fetch request
