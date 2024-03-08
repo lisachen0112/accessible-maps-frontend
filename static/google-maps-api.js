@@ -692,11 +692,11 @@ function login(event) {
     event.preventDefault();
     console.log('Login button clicked'); 
     // TODO set user to logged in user
-    user = document.getElementById('email').value;
-    closeDiv('auth');
-    // login successful, show user info
-    userProfile();
-}
+        user = document.getElementById('email').value;
+        closeDiv('auth');
+        // login successful, show user info
+        userProfile();
+    }
 
 function register() {
     console.log('Register button clicked');
@@ -801,6 +801,10 @@ function showUserSaved() {
 
     var userReview = document.getElementById('userReviews');
     userReview.classList.remove('selected');
+
+    var reviewsDiv = document.getElementById('user-view');
+    reviewsDiv.innerHTML = '';
+    reviewsDiv.textContent = 'No saved searches yet (coming soon)'; 
 
     console.log('Show user saved searches');
 }
