@@ -1,0 +1,108 @@
+#reviews {
+    display: none;
+    border: none;
+    position: fixed;
+    background-color: #004643;
+    color: #e8e4e6;
+    padding: 20px;
+    top: 50%;
+    left: 50%;
+    border-radius: 8px;
+    z-index: 90;
+    transform: translate(-50%, -50%); /* Center the div */
+    max-height: 80vh;
+    max-width: 50%;
+    min-width: 30%;
+    overflow-y: hidden;
+}
+
+#review-text{
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #e8e4e6;
+    color: #e8e4e6;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+#review-text:focus {
+    outline-style: solid;
+    outline-color: #f9bc60;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center; 
+    margin-bottom: 20px;
+}
+
+.star {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #e8e4e6;
+}
+
+.checked {
+    color: #f9bc60;
+}
+
+.review-form {
+    position: relative;
+}
+
+button[type="submit"] {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 15px;
+    margin-right: 15px;
+    background-color: #f9bc60;
+    color: #001e1d;
+    border: 2px solid #001e1d;
+    border-radius: 5px;
+    font-weight: 600;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#reviews .close {
+    color: #e8e4e6;
+}
+
+#reviews .close:hover {
+    color: #f9bc60;
+}
+
+.review {
+    background-color: #abd1c6;
+    color: #0f3433;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-weight: 400;
+    font-size: 0.9em;
+}
+
+#review-list {
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
+.stars {
+    margin-bottom: 6px;
+}
+
+.comment {
+    font-style: italic;
+    margin-bottom: 6px;
+}
+
+.user-email {
+    text-align: end;
+}
