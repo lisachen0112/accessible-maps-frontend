@@ -132,7 +132,7 @@ function searchPlaces() {
 
     // Create a Places Service instance
     var location = (userLocation) ? userLocation.lat + ',' + userLocation.lng : '51.509865,-0.138092';
-    var searchPlacesUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
+    var searchPlacesUrl = PLACES_API_URL + `/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
     console.log('Search Places URL:', searchPlacesUrl);
 
     // Make a fetch request to the API
@@ -668,7 +668,7 @@ async function submitReview(event) {
 
         showSpinner();
         // Post call to submit review
-        await sendPostRequest(rating, reviewText, selectedPlace.place_id, user);
+        await sendPostRequest(rating, reviewText, selectedPlace.place_id, user, selectedPlace.details.name);
 
         // Reload reviews and clear fields
         await viewReviews();
@@ -764,6 +764,12 @@ function renderUserReviews(reviews) {
             reviewText.classList.add('comment');
             reviewText.textContent = '"' + review.review + '"';
             reviewDiv.appendChild(reviewText);
+
+            // Place name
+            var placeName = document.createElement('div');
+            placeName.classList.add('place-name');
+            placeName.textContent = review.place_name;
+            reviewDiv.appendChild(placeName);
 
             reviewsDiv.appendChild(reviewDiv);
     });
