@@ -229,6 +229,7 @@ function openInfoDiv(place) {
     var placePhone = document.getElementById('place-phone');
     var placeRating = document.getElementById('place-rating');
     var placeWebsite = document.getElementById('place-website');
+    var placeHours = document.getElementById('place-hours');
     
     placeName.innerHTML = place.details.name;
     placeAddress.innerHTML = place.details.formatted_address;
@@ -506,11 +507,72 @@ function backToInfo() {
     closeDiv('itinerary-container');
 }
 
-function viewReviews() {
-    // get call to fetch reviews
+async function viewReviews() {
+    var reviewsDiv = document.getElementById('review-list');
+    reviewsDiv.innerHTML = '';
+
+    // Get the reviews for the selected place
+    showSpinner();
+    var placeId = selectedPlace.place_id;
+    var reviewsUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/reviews/place_id?place_id=${placeId}`;
+    fetch(reviewsUrl) 
+        .then(response => response.json())
+        .then(data => { 
+            renderReviews(data);
+            console.log('Reviews:', data);
+            hideSpinner();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching reviews. Please try again later.');
+            hideSpinner();
+        });
 
     var reviewsDiv = document.getElementById('reviews');
     reviewsDiv.style.display = 'block';
+}
+
+function renderReviews(reviews) {
+    var reviewsDiv = document.getElementById('review-list');
+
+    if (reviews.length > 0) {
+        reviews.forEach(function (review) {
+            var reviewDiv = document.createElement('div');
+            reviewDiv.classList.add('review');
+            
+            // Stars
+            var starsDiv = document.createElement('div');
+            starsDiv.classList.add('stars');
+            for (var i = 1; i <= 5; i++) {
+                var star = document.createElement('i');
+                star.classList.add('fa', 'fa-star');
+                if (i <= review.rating) {
+                    star.classList.add('checked');
+                }
+                starsDiv.appendChild(star);
+            }
+            reviewDiv.appendChild(starsDiv);
+
+            // Comment
+            var reviewText = document.createElement('div');
+            reviewText.classList.add('comment');
+            reviewText.textContent = '"' + review.review + '"';
+            reviewDiv.appendChild(reviewText);
+
+            // User Email
+            var userEmail = document.createElement('div');
+            userEmail.classList.add('user-email');
+            userEmail.textContent = review.user_email;
+            reviewDiv.appendChild(userEmail);
+
+            reviewsDiv.appendChild(reviewDiv);
+    });
+    } else {    
+        var noReviews = document.createElement('div');
+        noReviews.classList.add('no-reviews');
+        noReviews.textContent = 'No reviews available for this place';
+        reviewsDiv.appendChild(noReviews);
+    }
 }
 
 function changeColor(clickedIndex) {
@@ -525,9 +587,7 @@ function changeColor(clickedIndex) {
     }
 }
 
-
-function sendPostRequest(rating, review, place_id, email) {
-    showSpinner();
+async function sendPostRequest(rating, review, place_id, email) {
     console.log('Sending POST request:' + rating + review + place_id + email);
 
     // API endpoint URL
@@ -551,27 +611,21 @@ function sendPostRequest(rating, review, place_id, email) {
         body: JSON.stringify(postData)
     };
 
-    // Send the POST request
-    fetch(apiUrl, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Handle the response data as needed
-            console.log('Post request successful:', data);
-            hideSpinner();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            hideSpinner();
-        });
+    try {
+        // Send the POST request
+        const response = await fetch(apiUrl, requestOptions);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        // Handle the response data as needed
+        console.log('Post request successful:', data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
-
-function submitReview(event) {
+async function submitReview(event) {
 
     // TODO if user is not logged in, prompt to login
 
@@ -582,17 +636,19 @@ function submitReview(event) {
     var rating = document.querySelectorAll('.star-rating .fa-star.checked').length;
 
     if (rating === 0) {
-        alert('Please enter a star rating and/or a review text.');
+        alert('Please enter a star rating (required) and a review text.');
         return;
     }
 
+    showSpinner();
     // Post call to submit review
-    sendPostRequest(rating, reviewText, selectedPlace.place_id, 'testemail@gmail.com');
+    await sendPostRequest(rating, reviewText, selectedPlace.place_id, 'testemail@gmail.com');
 
     // Reload reviews and clear fields
-    viewReviews();
+    await viewReviews();
     document.getElementById('review-text').value = '';
     resetStarColors();
+    hideSpinner();
 }
 
 function resetStarColors() {

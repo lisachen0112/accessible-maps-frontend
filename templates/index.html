@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AccessAble Maps</title>
     <link rel="stylesheet" href="/static/style.css"> 
+    <link rel="stylesheet" href="/static/auth.css">
+    <link rel="stylesheet" href="/static/itinerary.css">
+    <link rel="stylesheet" href="/static/place-info.css">
+    <link rel="stylesheet" href="/static/review.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -13,10 +17,20 @@
         <i class="fa-solid fa-user"></i>
     </button>
     <div id="auth">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
         <button id="login-button" class="auth-option" onclick="login()">Login</button>
         <button id="register-button" class="auth-option" onclick="register()">Register</button>
         <button id='auth-close' class="close" onclick="closeDiv('auth')"><i class="fa-solid fa-x"></i></button>
-    </div>    
+    </div>   
+
+    <div id="user-info">
+        <button id="logout" onclick="logout()">Logout</button>
+    </div>  
 
     <div id="spinner-container">
         <div id="spinner"></div>
@@ -91,7 +105,6 @@
     <div id="reviews">
         <h3>Reviews</h3>
         <div id="review-list">
-            <div class="review"></div>
         </div>
         <form id="review-form" >
             <p>Submit your own review</p>
