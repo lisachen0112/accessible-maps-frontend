@@ -12,9 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-<script>
-    const PLACES_API_URL = "{{ PLACES_API_URL }}";
-</script>
 <body>
     <button id="user" onclick="authenticate()">
         <i class="fa-solid fa-user"></i>
@@ -140,6 +137,7 @@
         </button> 
     </div>
 </body>
+<script>const PLACES_API_URL = "{{ PLACES_API_URL }}"; </script>
 <script src="/static/google-maps-api.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&libraries=places&callback=initMap" async defer></script>
 </html>

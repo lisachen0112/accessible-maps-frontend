@@ -132,8 +132,8 @@ function searchPlaces() {
 
     // Create a Places Service instance
     var location = (userLocation) ? userLocation.lat + ',' + userLocation.lng : '51.509865,-0.138092';
-    // var searchPlacesUrl = PLACES_API_URL + `/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
-    var searchPlacesUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
+    var searchPlacesUrl = PLACES_API_URL + `/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
+    // var searchPlacesUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/lookup_places?input=${encodeURI(arrival)}&location=${location}`;
     console.log('Search Places URL:', searchPlacesUrl);
 
     // Make a fetch request to the API
