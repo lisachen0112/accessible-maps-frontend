@@ -24,25 +24,25 @@ jobs:
           docker buildx create --use
           docker buildx build --platform linux/amd64 -t ghcr.io/lisachen0112/accessable-maps-frontend:prod --push .
 
-  deploy-to-aci:
-    runs-on: ubuntu-latest
-    needs: build-and-push-image
-    steps:
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  # deploy-to-aci:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push-image
+  #   steps:
+  #     - name: 'Login via Azure CLI'
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'Deploy to Azure Container Instances'
-        uses: 'azure/aci-deploy@v1'
-        with:
-          resource-group: accessable-maps
-          dns-name-label: accessable-maps
-          image: ghcr.io/lisachen0112/accessable-maps-frontend:prod
-          registry-login-server: ghcr.io
-          registry-username: lisachen0112
-          registry-password: ${{ secrets.GHCR_TOKEN }}
-          secure-environment-variables: GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
-          name: accessable-maps
-          location: 'east us'
+  #     - name: 'Deploy to Azure Container Instances'
+  #       uses: 'azure/aci-deploy@v1'
+  #       with:
+  #         resource-group: accessable-maps
+  #         dns-name-label: accessable-maps
+  #         image: ghcr.io/lisachen0112/accessable-maps-frontend:prod
+  #         registry-login-server: ghcr.io
+  #         registry-username: lisachen0112
+  #         registry-password: ${{ secrets.GHCR_TOKEN }}
+  #         secure-environment-variables: GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
+  #         name: accessable-maps
+  #         location: 'east us'
   
