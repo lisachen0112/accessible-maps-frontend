@@ -300,7 +300,8 @@ function planJourney() {
         var departure = userLocation.lat + ',' + userLocation.lng;
 
         // Construct the URL with the entered locations
-        var publiTransportUrl = `https://public-transport-planner.azurewebsites.net/api/journey?departure=${departure}&arrival=${arrival}&accessibility=${joinedValues}`;
+        // var publiTransportUrl = `https://public-transport-planner.azurewebsites.net/api/journey?departure=${departure}&arrival=${arrival}&accessibility=${joinedValues}`;
+        var publiTransportUrl = JOURNEY_PLANNER_URL + `/api/journey?departure=${departure}&arrival=${arrival}&accessibility=${joinedValues}`;
         
         // Make a fetch request to the API
         fetch(publiTransportUrl)
