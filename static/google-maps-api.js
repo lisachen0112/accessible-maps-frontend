@@ -539,7 +539,8 @@ async function viewReviews() {
     // Get the reviews for the selected place
     showSpinner();
     var placeId = selectedPlace.place_id;
-    var reviewsUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/reviews/place_id?place_id=${placeId}`;
+    var reviewsUrl = PLACES_API_URL + `/api/reviews/place_id?place_id=${placeId}`;
+    // var reviewsUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/reviews/place_id?place_id=${placeId}`;
     fetch(reviewsUrl) 
         .then(response => response.json())
         .then(data => { 
@@ -617,7 +618,8 @@ async function sendPostRequest(rating, review, place_id, email, place_name) {
     console.log('Sending POST request:' + rating + review + place_id + email, place_name);
 
     // API endpoint URL
-    var apiUrl = 'http://accessable-maps-places.centralus.azurecontainer.io/api/reviews';
+    // var apiUrl = 'http://accessable-maps-places.centralus.azurecontainer.io/api/reviews';
+    var apiUrl = PLACES_API_URL + `/api/reviews`;
 
     // Data to be sent in the request body
     var postData = {
@@ -725,7 +727,8 @@ function showUserReviews() {
 
     // Get the reviews for the selected place
     showSpinner();
-    var reviewsUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/reviews/user?user_email=${user}`;
+    // var reviewsUrl = `http://accessable-maps-places.centralus.azurecontainer.io/api/reviews/user?user_email=${user}`;
+    var reviewsUrl = PLACES_API_URL + `/api/reviews/user?user_email=${user}`;
     fetch(reviewsUrl) 
         .then(response => response.json())
         .then(data => { 
