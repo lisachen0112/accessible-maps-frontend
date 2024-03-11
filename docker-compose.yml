@@ -5,10 +5,11 @@ services:
     image: ${PLACES_IMAGE}
     platform: linux/amd64
     ports:
-      - "80:80"
+      - 8080:80
     depends_on:
       - db_places
     environment:
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY_PLACES}
       DB_HOST: db_places
       DB_PORT: 5432
       DB_NAME: your_database_name
@@ -31,15 +32,22 @@ services:
     image: ${FRONTEND_IMAGE}
     platform: linux/amd64
     ports:
-      - "8080:80"
+      - 80:80
     depends_on:
       - places
+      - journey-planner
     environment:
-      # WEB_SERVICE_HOST: places
-      # WEB_SERVICE_PORT: 80
-      PLACES_API_URL: http://places:80
+      PLACES_API_URL: http://localhost:8080
+      JOURNEY_PLANNER_URL: http://localhost:8081
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
     pull_policy: always 
 
+  journey-planner:
+    image: ${JOURNEY_PLANNER_IMAGE}
+    platform: linux/amd64
+    ports:
+      - 8081:80
+    pull_policy: always
+    
 volumes:
   postgres_data:
